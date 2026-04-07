@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: qa-automation-journey
+Version: 0.1.0
+Summary: QA Automation Journey
+Requires-Dist: pytest
