@@ -1,15 +1,39 @@
 # QA Automation Journey
 
-This project is a journey into QA automation using Python and pytest.
+This repository tracks my learning journey into QA Automation using Python and Playwright.
 
-## Setup
+---
 
-1. Install dependencies: `pip install -r requirements.txt`
+## Day 1 Progress
 
-2. Run tests: `pytest`
+### ✅ Python Basics
+- Variables
+- Loops
+- Simple login logic
+
+### ✅ DSA Practice
+- Reverse string
+- Palindrome check
+
+### ✅ Playwright Automation
+- Opened browser
+- Navigated to Google
+- Validated page title using assertion
+
+---
 
 ## Project Structure
+qa-automation-journey/
+├── day1/
+│ ├── python_basics.py
+│ └── dsa.py
+├── tests/
+│ └── test_google.py
 
-- `tests/`: Contains test files
-- `requirements.txt`: Python dependencies
-- `pyproject.toml`: Project configuration
+
+---
+
+## How to Run Tests
+
+```bash
+pytest
