@@ -1,10 +1,11 @@
-text = "automation"
+def count_vowels(text):
+    vowels = "aeiou"
+    count = 0
 
-vowels = "aeiou"
-count = 0
+    for char in text:
+        if char.lower() in vowels:
+            count += 1
 
-for char in text:
-    if char.lower() in vowels:
-        count += 1
+    return count
 
-print("Vowel count:", count)
+print(count_vowels("automation"))
