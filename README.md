@@ -28,7 +28,7 @@ This repository tracks my learning journey into QA Automation using Python and P
 
 ## Project Structure
 qa-automation-journey/
-├── day1/
+├── dsa_problems/
 │   ├── python_basics.py
 │   ├── dsa.py
 │   ├── dsa 2.py
