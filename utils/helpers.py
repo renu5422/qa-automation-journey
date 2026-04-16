@@ -1,10 +1,14 @@
-import re
-from typing import List
+import os
+
+from playwright.sync_api import Locator, Page
 
 
-def normalize_text(text: str) -> str:
-    return re.sub(r"\s+", " ", text).strip().lower()
+class HelperUtils:
+    @staticmethod
+    def take_screenshot(page: Page, file_name: str) -> None:
+        os.makedirs("screenshots", exist_ok=True)
+        page.screenshot(path=f"screenshots/{file_name}.png")
 
-
-def extract_links(text: str) -> List[str]:
-    return re.findall(r"https?://\S+", text)
+    @staticmethod
+    def wait_for_element(locator: Locator) -> None:
+        locator.wait_for(state="visible")
