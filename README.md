@@ -6,32 +6,98 @@ This repository captures the QA automation learning journey using Python, Playwr
 
 ## What this repo contains
 - A Playwright Page Object Model for DuckDuckGo search.
-- Reusable helper utilities for screenshots and element waiting.
-- Pytest-based regression tests for search flows.
+- Reusable helper utilities for screenshots, safe fill, and element waiting.
+- Pytest-based regression and edge-case tests for search flows.
 - DSA practice scripts for common algorithm problems.
 - A running test result summary in `test-results.txt`.
 
 ---
 
 ## Current progress
-### Day 7 summary
-- Refactored `pages/search_page.py` to use a class-level `URL` constant.
-- Moved default app values into `config/settings.py`.
-- Updated `tests/test_search_pom.py` to use `DEFAULT_SEARCH_TERM`.
-- Added screenshot capture after the POM search flow.
-- Renamed DuckDuckGo test files for better organization.
-- Documented this progress in the README.
+### Day 9 summary
+- Added `test_empty_search_pom` — verifies empty search via the `SearchPage` POM doesn't crash the page.
+- Fixed `test_bang_redirect_behavior` — replaced unreliable `wait_for_url` with `expect(page).to_have_url(re.compile(...))` which polls the live URL and handles multi-hop redirects (DuckDuckGo → redirect intermediary → Wikipedia).
+- Fixed duplicate `test_empty_search` naming conflict — renamed POM variant to `test_empty_search_pom`.
+- All 13 tests passing across 6 test files.
+
+### Day 8 summary
+- Removed all `time.sleep()` calls — replaced with proper Playwright waits.
+- Fixed locators: replaced weak `h2` selectors with `[data-testid="result"]` for stability.
+- Added `test_search_edge_cases.py` with 6 edge-case tests covering empty input, long input, special characters, unicode, rapid search, and DuckDuckGo bang redirects.
+- Fixed `test_long_search_input` in POM suite — asserts load and URL instead of waiting for results that never appear.
+- Strengthened assertions with failure messages and `expect(page).not_to_have_title()` for navigation-safe title checks.
+- All 12 tests passing.
 
 ### QA Automation work
-- Created a reusable `SearchPage` object with navigation, search, and results count methods.
+- `SearchPage` POM with navigation, search, and results count methods.
 - Centralized base URL and default search term in `config/settings.py`.
-- Added a helper class in `utils/helpers.py` for screenshots and element waiting.
-- Kept the test flow simple and maintainable.
+- `HelperUtils` in `utils/helpers.py` for safe fill, safe click, safe wait, and screenshots.
+- Edge-case coverage: empty search, 500-char input, special characters, unicode, rapid sequential search, bang redirect behavior.
+- Locators use `[data-testid="result"]`, `input[name="q"]`, and `get_by_placeholder("Search")` — no positional or index-based selectors.
 
 ### DSA practice work
-- Implemented `dsa_problems/dsa_6_longest_common_prefix.py`.
-- Implemented `dsa_problems/dsa_6_valid_palindrome.py`.
-- Kept assertion-based examples in DSA scripts for quick verification.
+- Implemented `dsa_6_longest_common_prefix.py` and `dsa_6_valid_palindrome.py`.
+- Implemented Two Sum using a hashmap (O(n) time, O(n) space).
+- Assertion-based examples in all DSA scripts for quick verification.
+
+---
+
+## DSA deep dive — Two Sum (hashmap approach)
+
+### Problem
+Given a list of numbers and a target, return the indices of the two numbers that add up to the target.
+
+### Brute force vs hashmap
+
+**Brute force** checks every pair — O(n²) time:
+```python
+for i in range(len(nums)):
+    for j in range(i + 1, len(nums)):
+        if nums[i] + nums[j] == target:
+            return [i, j]
+```
+
+**Hashmap** does it in a single pass — O(n) time:
+```python
+def two_sum(nums, target):
+    seen = {}
+    for i, num in enumerate(nums):
+        diff = target - num
+        if diff in seen:
+            return [seen[diff], i]
+        seen[num] = i
+    return []
+```
+
+### Why the hashmap works
+
+For each number, instead of searching forward for its complement, you ask:
+> "Has the number I need already gone past me?"
+
+The `seen` dict stores every number encountered so far, mapped to its index.
+
+Step-by-step with `[2, 7, 11, 15]`, target `9`:
+
+| Step | `num` | `diff = 9 - num` | `seen` before check | Match? |
+|------|-------|-------------------|----------------------|--------|
+| 0 | 2 | 7 | `{}` | No → store `{2: 0}` |
+| 1 | 7 | 2 | `{2: 0}` | **Yes** → return `[0, 1]` |
+
+The key insight: `diff in seen` is O(1) — dictionary lookups in Python are constant time because they use a hash table internally. This turns a nested loop into a single pass.
+
+### Complexity
+| | Brute force | Hashmap |
+|---|---|---|
+| Time | O(n²) | O(n) |
+| Space | O(1) | O(n) |
+
+### Test results
+```
+two_sum([2, 7, 11, 15], 9)  → [0, 1]  ✓
+two_sum([3, 2, 4], 6)       → [1, 2]  ✓
+two_sum([3, 3], 6)           → [0, 1]  ✓
+two_sum([1, 2, 3], 100)      → []      ✓
+```
 
 ---
 
@@ -39,64 +105,95 @@ This repository captures the QA automation learning journey using Python, Playwr
 
 ```text
 qa-automation-journey/
-├── config/                  # Shared configuration values
-│   └── settings.py
-├── dsa_problems/            # Algorithm practice scripts
+├── config/                        # Shared configuration values
+│   └── settings.py                # BASE_URL, DEFAULT_SEARCH_TERM
+├── dsa_problems/                  # Algorithm practice scripts
 │   ├── dsa_6_longest_common_prefix.py
 │   ├── dsa_6_valid_palindrome.py
-│   ├── dsa_5.py
-│   ├── dsa_4.py
-│   ├── dsa_3.py
-│   ├── dsa_2.py
-│   ├── dsa.py
-│   ├── dsa_day1.py
-│   ├── dsa_day2.py
-│   ├── dsa_day3.py
-│   ├── dsa_day4.py
-│   ├── dsa_day5.py
+│   ├── dsa_5.py  →  dsa.py
+│   ├── dsa_day1.py  →  dsa_day5.py
 │   ├── python_basics.py
-│   ├── "Valid Anagram.py"
-│   └── "validate duplicate.py"
-├── pages/                   # Page object classes
-│   └── search_page.py
-├── tests/                   # Pytest test cases
-│   ├── conftest.py
-│   ├── test_google.py
-│   ├── test_search_pom.py
-│   ├── test_navigation.py
-│   ├── test_results_count.py
-│   ├── test_duckduckgo_search.py
-│   └── test_duckduckgo_search.py
-├── utils/                   # Utility modules
-│   └── helpers.py
-├── conftest.py              # Shared pytest fixtures
-├── pyproject.toml           # Python project configuration
-├── requirements.txt         # Project dependencies
-├── README.md                # Project documentation
-└── test-results.txt         # Latest test output
+│   ├── Valid Anagram.py
+│   └── validate duplicate.py
+├── pages/                         # Page Object Model classes
+│   └── search_page.py             # SearchPage (open, search, get_results_count)
+├── screenshots/                   # Captured screenshots on test run
+├── tests/                         # Pytest test cases
+│   ├── conftest.py                # page fixture (pytest-playwright)
+│   ├── test_google.py             # Sanity: Google title check
+│   ├── test_duckduckgo_search.py  # Core search + result visibility
+│   ├── test_navigation.py         # Click result and verify navigation
+│   ├── test_results_count.py      # Assert >= 5 results returned
+│   ├── test_search_pom.py         # POM-based search, empty, and long input tests
+│   └── test_search_edge_cases.py  # Edge cases: empty, long, special chars, unicode, rapid, bang
+├── utils/                         # Utility modules
+│   └── helpers.py                 # HelperUtils: safe_fill, safe_click, safe_wait, take_screenshot
+├── conftest.py                    # Shared fixtures (base_url)
+├── pyproject.toml                 # Python project configuration
+├── requirements.txt               # Project dependencies
+├── README.md                      # Project documentation
+└── test-results.txt               # Latest test output
 ```
 
 ---
 
 ## How to run tests
 
-Use the virtual environment Python interpreter:
+Activate the virtual environment first:
 
 ```powershell
-cd c:\Users\Admin\qa-automation-journey
-.\.venv\Scripts\python.exe -m pytest tests/test_search_pom.py -q
+cd C:\Users\Admin\qa-automation-journey
+.venv\Scripts\Activate.ps1
 ```
 
-Or run all tests:
+Run all tests:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest tests -q
+pytest tests/ -v
+```
+
+Run a specific file:
+
+```powershell
+pytest tests/test_search_edge_cases.py -v
+```
+
+Run a single test:
+
+```powershell
+pytest tests/test_search_edge_cases.py::test_special_character_search -v
 ```
 
 ---
 
+## Test suite overview
+
+| File | Tests | Description |
+|---|---|---|
+| `test_google.py` | 1 | Google page title sanity check |
+| `test_duckduckgo_search.py` | 1 | Search and assert result visible |
+| `test_navigation.py` | 1 | Search → click result → verify navigation |
+| `test_results_count.py` | 1 | Assert >= 5 results returned |
+| `test_search_pom.py` | 3 | POM-based: normal search, empty input, long input |
+| `test_search_edge_cases.py` | 6 | Empty, long, special chars, unicode, rapid, bang redirect |
+| **Total** | **13** | **All passing** |
+
+---
+
 ## Latest test status
-- `test-results.txt` currently records: `1 passed in 31.58s`.
+All 12 tests pass as of Day 8. Run `pytest tests/ -v` for live results.
+
+---
+
+## Known gotchas
+
+### DuckDuckGo bang syntax
+DuckDuckGo supports "bang" shortcuts that redirect to external sites. For example, `!@` redirects to Twitter and `!w` redirects to Wikipedia. Using `!` at the start of a search query in tests will cause unexpected redirects away from `duckduckgo.com`, breaking URL assertions.
+
+`test_special_character_search` uses `#$%^&*()` instead of `!@#$%^&*()` to avoid triggering a bang redirect.
+
+`test_bang_redirect_behavior` intentionally tests this behavior by searching `!w python` and asserting the redirect lands on `wikipedia.org`.
+
 
 ---
 
