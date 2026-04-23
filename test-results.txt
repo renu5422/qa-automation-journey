@@ -1,2 +1,20 @@
-﻿.                                                                        [100%]
-1 passed in 31.58s
+============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\Admin\qa-automation-journey
+configfile: pyproject.toml
+collected 12 items
+
+tests/test_search_edge_cases.py::test_empty_search PASSED
+tests/test_search_edge_cases.py::test_long_search_input PASSED
+tests/test_search_edge_cases.py::test_special_character_search PASSED
+tests/test_search_edge_cases.py::test_unicode_search PASSED
+tests/test_search_edge_cases.py::test_rapid_search PASSED
+tests/test_search_edge_cases.py::test_bang_redirect_behavior PASSED
+tests/test_search_edge_cases.py::test_empty_search_pom PASSED
+tests/test_search_navigation.py::test_duckduckgo_navigation PASSED
+tests/test_search_results.py::test_google_title PASSED
+tests/test_search_results.py::test_duckduckgo_search PASSED
+tests/test_search_results.py::test_duckduckgo_results_count PASSED
+tests/test_search_results.py::test_search_results_with_pom PASSED
+
+======================== 12 passed in 70.17s (0:01:10) ========================

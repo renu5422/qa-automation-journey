@@ -1,24 +1,21 @@
-from playwright.sync_api import Page
-
-from config.settings import BASE_URL
-from utils.helpers import HelperUtils
-
-
+from utils.wait_helpers import safe_fill
 class SearchPage:
-    URL = BASE_URL
-
-    def __init__(self, page: Page):
+    def __init__(self, page):
         self.page = page
-        self.search_input = page.locator('input[name="q"]')
+        self.search_input = page.get_by_placeholder("Search")
         self.results = page.locator("h2")
 
-    def open(self) -> None:
-        self.page.goto(self.URL)
+    def goto(self):
+        self.page.goto("https://duckduckgo.com/")
 
-    def search(self, text: str) -> None:
-        self.search_input.fill(text)
+    def search(self, query):
+        safe_fill(self.search_input, query, "Search Input")
         self.page.keyboard.press("Enter")
 
-    def get_results_count(self) -> int:
-        HelperUtils.wait_for_element(self.results.first)
+    def wait_for_results(self):
+        self.results.first.wait_for(timeout=5000)
+
+    def get_results_count(self):
         return self.results.count()
+    def is_results_loaded(self):
+        return self.results.count() > 0

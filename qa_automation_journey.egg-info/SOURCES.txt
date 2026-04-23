@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-qa_automation_journey.egg-info/PKG-INFO
-qa_automation_journey.egg-info/SOURCES.txt
-qa_automation_journey.egg-info/dependency_links.txt
-qa_automation_journey.egg-info/requires.txt
-qa_automation_journey.egg-info/top_level.txt
-tests/test_example.py
