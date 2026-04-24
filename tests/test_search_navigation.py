@@ -1,14 +1,28 @@
+from pages.search_page import SearchPage
+from utils.test_data import SEARCH_QUERIES
+
+
 def test_duckduckgo_navigation(page):
-    page.goto("https://duckduckgo.com")
+    search_page = SearchPage(page)
 
-    search_input = page.locator('input[name="q"]')
-    search_input.fill("Playwright automation")
-    page.keyboard.press("Enter")
+    # Open search engine
+    search_page.goto()
 
-    page.wait_for_selector("h2")
+    # Perform search
+    search_page.search(
+        SEARCH_QUERIES["basic"]
+    )
 
-    page.locator("h2").first.click()
+    # Wait for results
+    search_page.wait_for_results()
 
-    page.wait_for_load_state("load")
+    # Click first result
+    search_page.click_first_result()
 
+    # Wait for correct title
+    search_page.wait_for_page_title(
+        "Playwright"
+    )
+
+    # Final validation
     assert "Playwright" in page.title()

@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "qa-automation-journey"
 version = "0.1.0"
 description = "QA Automation Journey"
-dependencies = ["pytest", "playwright"]
+dependencies = ["pytest", "playwright", "requests"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
